@@ -1,0 +1,55 @@
+### Get All Posts
+
+GET http://localhost:3000/posts
+
+### Get Post By ID
+GET http://localhost:3000/posts/6968ce8efd1f1e318c42032b
+
+### Create New Post
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+	"title": "New Sample",
+	"conetent": "Body text",
+	"sender": "You"
+}
+
+### Update Post
+PUT http://localhost:3000/posts/6968ce8efd1f1e318c42032b
+Content-Type: application/json
+
+{
+	"title": "Updated Sample",
+	"content": "Updated Body text",
+	"sender": "You"
+}
+
+### Get comments for a Post
+
+GET http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments
+
+
+### Create Comment for a Post
+
+POST http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments
+Content-Type: application/json
+
+{
+	"content": "This is a deleted comment",
+	"author": "THe Commenter"
+}
+
+
+### Update Comment
+
+PUT http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments/6968ce8efd1f1e318c42032b
+Content-Type: application/json
+
+{
+	"content": "This is a comment",
+	"author": "Commenter"
+}
+### Delete Comment
+
+DELETE http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments/696a2c24c62dc1b34728bffb
