@@ -24,7 +24,7 @@ const register = async (req: Request, res: Response) => {
             refreshTokens: []
         });
         
-        const accessToken = jwt.sign({ userId: userDoc._id }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
+        const accessToken = jwt.sign({ userId: userDoc._id, username: userDoc.username }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
         const refreshTokenValue = jwt.sign({ userId: userDoc._id }, process.env.REFRESH_TOKEN_SECRET || 'superrefreshsecretkey', { expiresIn: '7d' });
         
         (userDoc as any).refreshTokens = [refreshTokenValue];
@@ -57,7 +57,7 @@ const login = async (req: Request, res: Response) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }  
         
-        const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
+        const accessToken = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
         const refreshTokenValue = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET || 'superrefreshsecretkey', { expiresIn: '7d' });
         
         (user as any).refreshTokens.push(refreshTokenValue);
@@ -89,13 +89,14 @@ const logout = async (req: Request, res: Response) => {
         
         const userDoc = user as any;
         userDoc.refreshTokens = userDoc.refreshTokens?.filter((token: string) => token !== refreshTokenValue) || [];
-        await userDoc.save();
         
+        // עדכון זמן ההתנתקות לרגע זה
+        userDoc.lastLogout = new Date(); 
+        await userDoc.save();
+
         res.json({ message: 'Logged out successfully' });
     } catch (error: any) {
-        console.error('Logout token error:', error);
-        const msg = 'Invalid token';
-        return res.status(401).json({ message: msg, error: process.env.NODE_ENV !== 'production' ? error?.message || String(error) : undefined });
+        return res.status(401).json({ message: 'Invalid token' });
     }
 };
 

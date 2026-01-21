@@ -17,7 +17,7 @@ const getCommentsForPost = async (req: Request, res: Response): Promise<void> =>
 const createComment = async (req: Request, res: Response): Promise<void> => {
   const postId = req.params.postId;
   try {
-    const comment = await Comment.create({ ...req.body, post: postId });
+    const comment = await Comment.create({ ...req.body, post: postId, author: (req as any).user.username });
     res.status(201).json(comment);
   } catch (error) {
     console.error(error);
@@ -30,6 +30,15 @@ const updateComment = async (req: Request, res: Response): Promise<void> => {
   const commentId = req.params.commentId;
   const updatedData = req.body;
   try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      res.status(404).json({ message: "Comment not found" });
+      return;
+    }
+    if (comment.author !== (req as any).user.username) {
+      res.status(403).json({ message: "You are not authorized to update this comment" });
+      return;
+    }
     const updatedComment = await Comment.findByIdAndUpdate(commentId, updatedData, { new: true });
     res.json(updatedComment);
   } catch (error) {
@@ -42,6 +51,15 @@ const updateComment = async (req: Request, res: Response): Promise<void> => {
 const deleteComment = async (req: Request, res: Response): Promise<void> => {
   const commentId = req.params.commentId;
   try {
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      res.status(404).json({ message: "Comment not found" });
+      return;
+    }
+    if (comment.author !== (req as any).user.username) {
+      res.status(403).json({ message: "You are not authorized to delete this comment" });
+      return;
+    }
     const deletedComment = await Comment.findByIdAndDelete(commentId);
     if (!deletedComment) {
       res.status(404).json({ message: "Comment not found" });

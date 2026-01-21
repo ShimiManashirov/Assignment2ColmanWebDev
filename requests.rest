@@ -1,100 +1,111 @@
-### Get All Posts
+### Variables
+@hostname = localhost
+@port = 3000
+@baseUrl = http://{{hostname}}:{{port}}
 
-GET http://localhost:3000/posts
-
-### Get Post By ID
-GET http://localhost:3000/posts/6968ce8efd1f1e318c42032b
-
-### Create New Post
-POST http://localhost:3000/posts
+### 1. User Registration
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-	"title": "New Sample",
-	"content": "Body text",
-	"sender": "You"
+    "username": "testuser",
+    "password": "testpassword"
 }
 
-### Update Post
-PUT http://localhost:3000/posts/6968ce8efd1f1e318c42032b
+---
+
+### 2. User Login
+# @name login
+# This request captures the tokens automatically for subsequent requests
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-	"title": "Updated Sample",
-	"content": "Updated Body text",
-	"sender": "You"
+    "username": "testuser",
+    "password": "testpassword"
 }
 
-### Get comments for a Post
+### Capture Tokens from Login Response
+@accessToken = {{login.response.body.accessToken}}
+@refreshToken = {{login.response.body.refreshToken}}
 
-GET http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments
+---
 
+### 3. Get All Posts
+GET {{baseUrl}}/posts
+Authorization: Bearer {{accessToken}}
 
-### Create Comment for a Post
+### 4. Get Post By ID
+GET {{baseUrl}}/posts/6968ce8efd1f1e318c42032b
+Authorization: Bearer {{accessToken}}
 
-POST http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments
+### 5. Create New Post
+POST {{baseUrl}}/posts
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-	"content": "This is a deleted comment",
-	"author": "THe Commenter"
+    "title": "New Sample",
+    "content": "Body text",
+    "sender": "You"
 }
 
-
-### Update Comment
-
-PUT http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments/6968ce8efd1f1e318c42032b
+### 6. Update Post
+PUT {{baseUrl}}/posts/6968ce8efd1f1e318c42032b
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-	"content": "This is a comment",
-	"author": "Commenter"
-}
-### Delete Comment
-
-DELETE http://localhost:3000/posts/6968ce8efd1f1e318c42032b/comments/696a2c24c62dc1b34728bffb
-
-
-
-### User Registration
-POST http://localhost:3000/auth/register
-Content-Type: application/json
-
-{
-	"username": "testuser",
-	"password": "testpassword"
+    "title": "Updated Sample",
+    "content": "Updated Body text",
+    "sender": "You"
 }
 
-### User Login
-# Run this first to get accessToken and refreshToken
-POST http://localhost:3000/auth/login
+---
+
+### 7. Get Comments for a Post
+GET {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments
+Authorization: Bearer {{accessToken}}
+
+### 8. Create Comment for a Post
+POST {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-	"username": "testuser",
-	"password": "testpassword"
+    "content": "This is a new comment",
+    "author": "The Commenter"
 }
 
-
-
-### Logout
-# Step 1: Run "User Login" above first
-# Step 2: Copy the refreshToken value from the login response
-# Step 3: Replace <ACTUAL_REFRESH_TOKEN> with that value and run this request
-POST http://localhost:3000/auth/logout
+### 9. Update Comment
+PUT {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments/6968ce8efd1f1e318c42032b
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
-	"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTcwOWVhYzNiNGY4YmFjNWVmYWRiZTQiLCJpYXQiOjE3Njg5ODkwMDIsImV4cCI6MTc2OTU5MzgwMn0.v4KCzB2ipz_EFWK2PSaxvUzyHVdUvEzG6zpVNk-e-uQ"
+    "content": "Updated comment content",
+    "author": "Commenter"
 }
 
-### Token Refresh	
-# Step 1: Run "User Login" above first
-# Step 2: Copy the refreshToken value from the login response
-# Step 3: Replace <ACTUAL_REFRESH_TOKEN> with that value and run this request
-POST http://localhost:3000/auth/refresh
+### 10. Delete Comment
+DELETE {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments/696a2c24c62dc1b34728bffb
+Authorization: Bearer {{accessToken}}
+
+---
+
+### 11. Token Refresh   
+# Uses the refreshToken captured during login
+POST {{baseUrl}}/auth/refresh
 Content-Type: application/json
 
 {
-	"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTcwOWVhYzNiNGY4YmFjNWVmYWRiZTQiLCJpYXQiOjE3Njg5ODkwMDIsImV4cCI6MTc2OTU5MzgwMn0.v4KCzB2ipz_EFWK2PSaxvUzyHVdUvEzG6zpVNk-e-uQ"
+    "refreshToken": "{{refreshToken}}"
+}
+
+### 12. Logout
+POST {{baseUrl}}/auth/logout
+Content-Type: application/json
+
+{
+    "refreshToken": "{{refreshToken}}"
 }
