@@ -28,7 +28,7 @@ const getCommentsForPost = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
     try {
-        const comment = yield commentModel_1.default.create(Object.assign(Object.assign({}, req.body), { post: postId }));
+        const comment = yield commentModel_1.default.create(Object.assign(Object.assign({}, req.body), { post: postId, author: req.user.username }));
         res.status(201).json(comment);
     }
     catch (error) {
@@ -41,6 +41,15 @@ const updateComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const commentId = req.params.commentId;
     const updatedData = req.body;
     try {
+        const comment = yield commentModel_1.default.findById(commentId);
+        if (!comment) {
+            res.status(404).json({ message: "Comment not found" });
+            return;
+        }
+        if (comment.author !== req.user.username) {
+            res.status(403).json({ message: "You are not authorized to update this comment" });
+            return;
+        }
         const updatedComment = yield commentModel_1.default.findByIdAndUpdate(commentId, updatedData, { new: true });
         res.json(updatedComment);
     }
@@ -53,6 +62,15 @@ const updateComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const commentId = req.params.commentId;
     try {
+        const comment = yield commentModel_1.default.findById(commentId);
+        if (!comment) {
+            res.status(404).json({ message: "Comment not found" });
+            return;
+        }
+        if (comment.author !== req.user.username) {
+            res.status(403).json({ message: "You are not authorized to delete this comment" });
+            return;
+        }
         const deletedComment = yield commentModel_1.default.findByIdAndDelete(commentId);
         if (!deletedComment) {
             res.status(404).json({ message: "Comment not found" });

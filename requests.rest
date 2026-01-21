@@ -9,10 +9,11 @@ Content-Type: application/json
 
 {
     "username": "testuser",
-    "password": "testpassword"
+    "password": "testpassword",
+    "email": "testuser@example.com"
 }
 
----
+###
 
 ### 2. User Login
 # @name login
@@ -29,14 +30,14 @@ Content-Type: application/json
 @accessToken = {{login.response.body.accessToken}}
 @refreshToken = {{login.response.body.refreshToken}}
 
----
+###
 
 ### 3. Get All Posts
 GET {{baseUrl}}/posts
 Authorization: Bearer {{accessToken}}
 
 ### 4. Get Post By ID
-GET {{baseUrl}}/posts/6968ce8efd1f1e318c42032b
+GET {{baseUrl}}/posts/6971101fdd29eb2ff80977fc
 Authorization: Bearer {{accessToken}}
 
 ### 5. Create New Post
@@ -51,7 +52,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 6. Update Post
-PUT {{baseUrl}}/posts/6968ce8efd1f1e318c42032b
+PUT {{baseUrl}}/posts/6971101fdd29eb2ff80977fc
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -61,14 +62,14 @@ Authorization: Bearer {{accessToken}}
     "sender": "You"
 }
 
----
+###
 
 ### 7. Get Comments for a Post
-GET {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments
+GET {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments
 Authorization: Bearer {{accessToken}}
 
 ### 8. Create Comment for a Post
-POST {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments
+POST {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -78,7 +79,7 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 9. Update Comment
-PUT {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments/6968ce8efd1f1e318c42032b
+PUT {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments/69711075dd29eb2ff8097816
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -88,10 +89,10 @@ Authorization: Bearer {{accessToken}}
 }
 
 ### 10. Delete Comment
-DELETE {{baseUrl}}/posts/6968ce8efd1f1e318c42032b/comments/696a2c24c62dc1b34728bffb
+DELETE {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments/69711075dd29eb2ff8097816
 Authorization: Bearer {{accessToken}}
 
----
+###
 
 ### 11. Token Refresh   
 # Uses the refreshToken captured during login

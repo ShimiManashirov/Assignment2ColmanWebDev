@@ -5,10 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const postController_1 = __importDefault(require("../controllers/postController"));
+const authMiddleware_1 = require("../controllers/authMiddleware");
 const router = (0, express_1.Router)();
-router.get("/", postController_1.default.getAllPosts);
-router.get("/:id", postController_1.default.getPostById);
-router.post("/", postController_1.default.createPost);
-router.put("/:id", postController_1.default.updatePost);
+router.get("/", authMiddleware_1.authenticateToken, postController_1.default.getAllPosts);
+router.get("/:id", authMiddleware_1.authenticateToken, postController_1.default.getPostById);
+router.post("/", authMiddleware_1.authenticateToken, postController_1.default.createPost);
+router.put("/:id", authMiddleware_1.authenticateToken, postController_1.default.updatePost);
+router.delete("/:id", authMiddleware_1.authenticateToken, postController_1.default.deletePost);
 exports.default = router;
 //# sourceMappingURL=postRoute.js.map
