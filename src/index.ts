@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import postRoute from "./routes/postRoute";
 import commentRoute from "./routes/commentRoute";
 import authRoute from "./routes/authRoute";
+import { authenticateToken } from "./controllers/authMiddleware";
 import dotenv from "dotenv";
 
 dotenv.config();

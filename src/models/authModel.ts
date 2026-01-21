@@ -6,29 +6,22 @@ export interface IUser extends Document {
   refreshTokens?: string[];
 }
 
+
+
+export interface IUser extends Document {
+  username: string;
+  password: string;
+  refreshTokens?: string[];
+  lastLogout?: Date; // שדה חדש
+}
+
 const userSchema: Schema = new Schema<IUser>({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  refreshTokens: {
-    type: [String],
-    default: [],
-  },
+  username: { type: String, required: true, unique: true, trim: true },
+  password: { type: String, required: true },
+  refreshTokens: { type: [String], default: [] },
+  lastLogout: { type: Date, default: null } // ערך ברירת מחדל
 });
 
-// Pre-save hook to hash the password (if needed, typically done in authController for registration)
-// userSchema.pre('save', async function (next) {
-//   if (this.isModified('password')) {
-//     this.password = await bcrypt.hash(this.password, 10);
-//   }
-//   next();
-// });
+
 
 export default mongoose.model<IUser>('User', userSchema);
