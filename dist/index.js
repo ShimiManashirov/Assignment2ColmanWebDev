@@ -16,10 +16,14 @@ const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const postRoute_1 = __importDefault(require("./routes/postRoute"));
 const commentRoute_1 = __importDefault(require("./routes/commentRoute"));
+const authRoute_1 = __importDefault(require("./routes/authRoute"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use("/posts", postRoute_1.default);
 app.use("/posts/:postId/comments", commentRoute_1.default);
+app.use("/auth", authRoute_1.default);
 const initApp = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield mongoose_1.default.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/assignment2");
