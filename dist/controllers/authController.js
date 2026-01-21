@@ -50,23 +50,26 @@ const authModel_1 = __importDefault(require("../models/authModel"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const jwt = __importStar(require("jsonwebtoken"));
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
-    if (!username || !password) {
-        return res.status(400).json({ message: 'Username and password are required' });
+    const { username, password, email } = req.body;
+    if (!username || !password || !email) {
+        return res.status(400).json({ message: 'Username, password and email are required' });
     }
     try {
-        const existingUser = yield authModel_1.default.findOne({ username });
+        const existingUser = yield authModel_1.default.findOne({
+            $or: [{ username }, { email }]
+        });
         if (existingUser) {
-            return res.status(400).json({ message: 'Username already exists' });
+            return res.status(400).json({ message: 'Username or email already exists' });
         }
         const salt = yield bcryptjs_1.default.genSalt(10);
         const hashedPassword = yield bcryptjs_1.default.hash(password, salt);
         const userDoc = new authModel_1.default({
             username,
             password: hashedPassword,
+            email,
             refreshTokens: []
         });
-        const accessToken = jwt.sign({ userId: userDoc._id }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
+        const accessToken = jwt.sign({ userId: userDoc._id, username: userDoc.username }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
         const refreshTokenValue = jwt.sign({ userId: userDoc._id }, process.env.REFRESH_TOKEN_SECRET || 'superrefreshsecretkey', { expiresIn: '7d' });
         userDoc.refreshTokens = [refreshTokenValue];
         yield userDoc.save();
@@ -95,7 +98,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
-        const accessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
+        const accessToken = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });
         const refreshTokenValue = jwt.sign({ userId: user._id }, process.env.REFRESH_TOKEN_SECRET || 'superrefreshsecretkey', { expiresIn: '7d' });
         user.refreshTokens.push(refreshTokenValue);
         yield user.save();
@@ -118,22 +121,23 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const decoded = jwt.verify(refreshTokenValue, process.env.REFRESH_TOKEN_SECRET || 'superrefreshsecretkey');
         const user = yield authModel_1.default.findById(decoded.userId);
-        if (user) {
-            const userDoc = user;
-            userDoc.refreshTokens = ((_a = userDoc.refreshTokens) === null || _a === void 0 ? void 0 : _a.filter((token) => token !== refreshTokenValue)) || [];
-            yield userDoc.save();
+        if (!user) {
+            return res.status(401).json({ message: 'User not found' });
         }
+        const userDoc = user;
+        userDoc.refreshTokens = ((_a = userDoc.refreshTokens) === null || _a === void 0 ? void 0 : _a.filter((token) => token !== refreshTokenValue)) || [];
+        // עדכון זמן ההתנתקות לרגע זה
+        userDoc.lastLogout = new Date();
+        yield userDoc.save();
         res.json({ message: 'Logged out successfully' });
     }
     catch (error) {
-        console.error('Logout token error:', error);
-        const msg = 'Invalid token';
-        return res.status(401).json({ message: msg, error: process.env.NODE_ENV !== 'production' ? (error === null || error === void 0 ? void 0 : error.message) || String(error) : undefined });
+        return res.status(401).json({ message: 'Invalid token' });
     }
 });
 exports.logout = logout;
 const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     const { refreshToken: refreshTokenValue } = req.body;
     if (!refreshTokenValue) {
         return res.status(401).json({ message: 'Refresh token is required' });
@@ -146,7 +150,6 @@ const refreshToken = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         const userDoc = user;
         if (!((_a = userDoc.refreshTokens) === null || _a === void 0 ? void 0 : _a.includes(refreshTokenValue))) {
-            console.log('Refresh - Token not found in DB. User tokens count:', (_b = userDoc.refreshTokens) === null || _b === void 0 ? void 0 : _b.length);
             return res.status(401).json({ message: 'Invalid or expired refresh token' });
         }
         const newAccessToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'supersecretjwtkey', { expiresIn: '1h' });

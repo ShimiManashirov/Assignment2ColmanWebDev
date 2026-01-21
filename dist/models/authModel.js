@@ -35,27 +35,11 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const userSchema = new mongoose_1.Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    refreshTokens: {
-        type: [String],
-        default: [],
-    },
+    username: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true },
+    email: { type: String, required: true, unique: true, trim: true },
+    refreshTokens: { type: [String], default: [] },
+    lastLogout: { type: Date, default: null }
 });
-// Pre-save hook to hash the password (if needed, typically done in authController for registration)
-// userSchema.pre('save', async function (next) {
-//   if (this.isModified('password')) {
-//     this.password = await bcrypt.hash(this.password, 10);
-//   }
-//   next();
-// });
 exports.default = mongoose_1.default.model('User', userSchema);
 //# sourceMappingURL=authModel.js.map

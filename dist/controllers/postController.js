@@ -15,9 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const postModel_1 = __importDefault(require("../models/postModel"));
 const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { sender } = req.query;
-        const filter = sender ? { sender } : {};
-        const posts = yield postModel_1.default.find(filter);
+        const posts = yield postModel_1.default.find();
         res.json(posts);
     }
     catch (error) {
@@ -44,6 +42,7 @@ const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postData = req.body;
+    postData.sender = req.user.username;
     console.log(postData);
     try {
         const newPost = yield postModel_1.default.create(postData);
@@ -59,6 +58,15 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const id = req.params.id;
     const updateData = req.body;
     try {
+        const post = yield postModel_1.default.findById(id);
+        if (!post) {
+            res.status(404).json({ message: "Post not found" });
+            return;
+        }
+        if (post.sender !== req.user.username) {
+            res.status(403).json({ message: "You are not authorized to update this post" });
+            return;
+        }
         const updatedPost = yield postModel_1.default.findByIdAndUpdate(id, updateData, { new: true });
         if (!updatedPost) {
             res.status(404).json({ message: "Post not found" });
@@ -72,10 +80,32 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ message: "Error updating post", error: errorMessage });
     }
 });
+const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const id = req.params.id;
+    try {
+        const post = yield postModel_1.default.findById(id);
+        if (!post) {
+            res.status(404).json({ message: "Post not found" });
+            return;
+        }
+        if (post.sender !== req.user.username) {
+            res.status(403).json({ message: "You are not authorized to delete this post" });
+            return;
+        }
+        yield postModel_1.default.findByIdAndDelete(id);
+        res.status(200).json({ message: "Post deleted successfully" });
+    }
+    catch (error) {
+        console.error(error);
+        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        res.status(500).json({ message: "Error deleting post", error: errorMessage });
+    }
+});
 exports.default = {
     getAllPosts,
     getPostById,
     createPost,
-    updatePost
+    updatePost,
+    deletePost
 };
 //# sourceMappingURL=postController.js.map
