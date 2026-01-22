@@ -1,10 +1,17 @@
 import { Request, Response } from "express";
 import Post from "../models/postModel";
 
+
 const getAllPosts = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.query.userId;
   try {
-    const posts = await Post.find();
-    res.json(posts);
+    if (userId) {
+      const posts = await Post.find({ userId });
+      res.json(posts);
+    } else {
+      const posts = await Post.find();
+      res.json(posts);
+    }
   } catch (error) {
     console.error(error);
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
@@ -51,7 +58,7 @@ const updatePost = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Post not found" });
       return;
     }
-    if (post.sender !== (req as any).user.username) {
+    if (post.senderId !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to update this post" });
       return;
     }
@@ -76,7 +83,7 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Post not found" });
       return;
     }
-    if (post.sender !== (req as any).user.username) {
+    if (post.senderId !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to delete this post" });
       return;
     }
