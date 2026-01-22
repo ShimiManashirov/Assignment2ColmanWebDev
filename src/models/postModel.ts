@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface IPost extends Document {
   title: string;
   content: string;
-  sender: string;
+  userId: string;
 }
 
 const postSchema = new Schema<IPost>({
@@ -15,10 +15,10 @@ const postSchema = new Schema<IPost>({
     type: String,
     required: true
   },
-  sender: {
+  userId: {
     type: String,
     required: true
   }
 });
 
-export default mongoose.model<IPost>("post", postSchema);
+export default mongoose.model<IPost>("Post", postSchema);

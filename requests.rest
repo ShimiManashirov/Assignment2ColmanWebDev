@@ -48,7 +48,7 @@ Authorization: Bearer {{accessToken}}
 {
     "title": "New Sample",
     "content": "Body text",
-    "sender": "You"
+    "userId": "6971101fdd29eb2ff80977fc"
 }
 
 ### 6. Update Post
@@ -59,7 +59,7 @@ Authorization: Bearer {{accessToken}}
 {
     "title": "Updated Sample",
     "content": "Updated Body text",
-    "sender": "You"
+    "userId": "6971101fdd29eb2ff80977fc"
 }
 
 ###
@@ -75,7 +75,7 @@ Authorization: Bearer {{accessToken}}
 
 {
     "content": "This is a new comment",
-    "author": "The Commenter"
+    "userId": "6971101fdd29eb2ff80977fc"
 }
 
 ### 9. Update Comment
@@ -85,7 +85,7 @@ Authorization: Bearer {{accessToken}}
 
 {
     "content": "Updated comment content",
-    "author": "Commenter"
+    "userId": "6971101fdd29eb2ff80977fc"
 }
 
 ### 10. Delete Comment

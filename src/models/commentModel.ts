@@ -1,14 +1,14 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 interface IComment extends Document {
-  author: string;
+  userrId: string;
   content: string;
   post: mongoose.Schema.Types.ObjectId;
   createdAt: Date;
 }
 
 const commentSchema = new Schema<IComment>({
-  author: {
+  userId: {
     type: String,
     required: true
   },
@@ -18,7 +18,7 @@ const commentSchema = new Schema<IComment>({
   },
   post: {
     type: Schema.Types.ObjectId,
-    ref: "post",
+    ref: "Post",
     required: true
   },
   createdAt: {

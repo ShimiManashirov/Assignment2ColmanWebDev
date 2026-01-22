@@ -1,7 +1,7 @@
 {
-  "name": "assignment1colamanwebdev",
+  "name": "assignment2colamanwebdev",
   "version": "1.0.0",
-  "description": "\"# Assignment1ColmanWebDev\"",
+  "description": "\"# Assignment2ColmanWebDev\"",
   "main": "dist/server.js",
   "scripts": {
     "start": "node --env-file=.env.dev dist/server.js",
