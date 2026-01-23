@@ -3,5 +3,5 @@ export default {
     preset: "ts-jest",
     testEnvironment: "node",
     setupFiles: ["<rootDir>/jest.setup.ts"],
-    testMatch: ["<rootDir>/src/**/*.test.ts"], // Only run .ts tests in src
+    testMatch: ["<rootDir>/src/**/*.test.ts"],
 };
