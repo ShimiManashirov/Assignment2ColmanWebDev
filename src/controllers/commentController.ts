@@ -39,7 +39,8 @@ const updateComment = async (req: Request, res: Response): Promise<void> => {
       res.status(403).json({ message: "You are not authorized to update this comment" });
       return;
     }
-    const updatedComment = await Comment.findByIdAndUpdate(commentId, updatedData, { new: true });
+    const { userId, ...rest } = updatedData; // Exclude userId from update
+    const updatedComment = await Comment.findByIdAndUpdate(commentId, rest, { new: true });
     res.json(updatedComment);
   } catch (error) {
     console.error(error);
@@ -56,7 +57,7 @@ const deleteComment = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Comment not found" });
       return;
     }
-    if (comment.authorId !== (req as any).user.userId) {
+    if (comment.userId !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to delete this comment" });
       return;
     }

@@ -10,7 +10,7 @@ Content-Type: application/json
 {
     "username": "testuser",
     "password": "testpassword",
-    "email": "testuser@example.com"
+    "email": "tstuser@example.com"
 }
 
 ###
@@ -37,7 +37,7 @@ GET {{baseUrl}}/posts
 Authorization: Bearer {{accessToken}}
 
 ### 4. Get Post By ID
-GET {{baseUrl}}/posts/6971101fdd29eb2ff80977fc
+GET {{baseUrl}}/posts/6973442fc740380016d05ca0
 Authorization: Bearer {{accessToken}}
 
 ### 5. Create New Post
@@ -48,44 +48,44 @@ Authorization: Bearer {{accessToken}}
 {
     "title": "New Sample",
     "content": "Body text",
-    "userId": "6971101fdd29eb2ff80977fc"
+    "userId": "69734406c740380016d05c97"
 }
 
 ### 6. Update Post
-PUT {{baseUrl}}/posts/6971101fdd29eb2ff80977fc
+PUT {{baseUrl}}/posts/6973442fc740380016d05ca0
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
     "title": "Updated Sample",
     "content": "Updated Body text",
-    "userId": "6971101fdd29eb2ff80977fc"
+    "userId": "69734406c740380016d05c97"
 }
 
 ###
 
 ### 7. Get Comments for a Post
-GET {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments
+GET {{baseUrl}}/posts/6973442fc740380016d05ca0/comments
 Authorization: Bearer {{accessToken}}
 
 ### 8. Create Comment for a Post
-POST {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments
+POST {{baseUrl}}/posts/6973442fc740380016d05ca0/comments
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
     "content": "This is a new comment",
-    "userId": "6971101fdd29eb2ff80977fc"
+    "userId": "69734406c740380016d05c97"
 }
 
 ### 9. Update Comment
-PUT {{baseUrl}}/posts/6971101fdd29eb2ff80977fc/comments/69711075dd29eb2ff8097816
+PUT {{baseUrl}}/posts/6973442fc740380016d05ca0/comments/69734467c740380016d05cac
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
     "content": "Updated comment content",
-    "userId": "6971101fdd29eb2ff80977fc"
+    "userId": "69734484c740380016d05caf"
 }
 
 ### 10. Delete Comment
