@@ -37,7 +37,8 @@ const register = async (req: Request, res: Response) => {
         res.status(201).json({
             message: 'User registered successfully',
             accessToken,
-            refreshToken: refreshTokenValue
+            refreshToken: refreshTokenValue,
+            userId: userDoc._id
         });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
@@ -69,7 +70,8 @@ const login = async (req: Request, res: Response) => {
 
         res.json({
             accessToken,
-            refreshToken: refreshTokenValue
+            refreshToken: refreshTokenValue,
+            userId: user._id
         });
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
@@ -94,7 +96,6 @@ const logout = async (req: Request, res: Response) => {
         const userDoc = user as any;
         userDoc.refreshTokens = userDoc.refreshTokens?.filter((token: string) => token !== refreshTokenValue) || [];
 
-        // עדכון זמן ההתנתקות לרגע זה
         userDoc.lastLogout = new Date();
         await userDoc.save();
 

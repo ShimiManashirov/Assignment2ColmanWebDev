@@ -76,7 +76,8 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(201).json({
             message: 'User registered successfully',
             accessToken,
-            refreshToken: refreshTokenValue
+            refreshToken: refreshTokenValue,
+            userId: userDoc._id
         });
     }
     catch (error) {
@@ -104,7 +105,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         yield user.save();
         res.json({
             accessToken,
-            refreshToken: refreshTokenValue
+            refreshToken: refreshTokenValue,
+            userId: user._id
         });
     }
     catch (error) {
@@ -126,7 +128,6 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const userDoc = user;
         userDoc.refreshTokens = ((_a = userDoc.refreshTokens) === null || _a === void 0 ? void 0 : _a.filter((token) => token !== refreshTokenValue)) || [];
-        // עדכון זמן ההתנתקות לרגע זה
         userDoc.lastLogout = new Date();
         yield userDoc.save();
         res.json({ message: 'Logged out successfully' });

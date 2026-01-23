@@ -28,7 +28,7 @@ const getCommentsForPost = (req, res) => __awaiter(void 0, void 0, void 0, funct
 const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postId = req.params.postId;
     try {
-        const comment = yield commentModel_1.default.create(Object.assign(Object.assign({}, req.body), { post: postId, author: req.user.username }));
+        const comment = yield commentModel_1.default.create(Object.assign(Object.assign({}, req.body), { post: postId, userId: req.user.userId }));
         res.status(201).json(comment);
     }
     catch (error) {
@@ -46,7 +46,7 @@ const updateComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(404).json({ message: "Comment not found" });
             return;
         }
-        if (comment.author !== req.user.username) {
+        if (comment.userId.toString() !== req.user.userId) {
             res.status(403).json({ message: "You are not authorized to update this comment" });
             return;
         }
@@ -67,7 +67,7 @@ const deleteComment = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.status(404).json({ message: "Comment not found" });
             return;
         }
-        if (comment.author !== req.user.username) {
+        if (comment.userId.toString() !== req.user.userId) {
             res.status(403).json({ message: "You are not authorized to delete this comment" });
             return;
         }

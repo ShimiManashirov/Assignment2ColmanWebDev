@@ -43,10 +43,10 @@ const postSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    sender: {
+    userId: {
         type: String,
         required: true
     }
 });
-exports.default = mongoose_1.default.model("post", postSchema);
+exports.default = mongoose_1.default.model("Post", postSchema);
 //# sourceMappingURL=postModel.js.map

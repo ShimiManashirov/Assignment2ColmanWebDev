@@ -14,9 +14,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const postModel_1 = __importDefault(require("../models/postModel"));
 const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const userId = req.query.userId;
     try {
-        const posts = yield postModel_1.default.find();
-        res.json(posts);
+        if (userId) {
+            const posts = yield postModel_1.default.find({ userId });
+            res.json(posts);
+        }
+        else {
+            const posts = yield postModel_1.default.find();
+            res.json(posts);
+        }
     }
     catch (error) {
         console.error(error);
@@ -42,7 +49,7 @@ const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 });
 const createPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const postData = req.body;
-    postData.sender = req.user.username;
+    postData.userId = req.user.userId;
     console.log(postData);
     try {
         const newPost = yield postModel_1.default.create(postData);
@@ -63,7 +70,7 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(404).json({ message: "Post not found" });
             return;
         }
-        if (post.sender !== req.user.username) {
+        if (post.userId.toString() !== req.user.userId) {
             res.status(403).json({ message: "You are not authorized to update this post" });
             return;
         }
@@ -88,7 +95,7 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(404).json({ message: "Post not found" });
             return;
         }
-        if (post.sender !== req.user.username) {
+        if (post.userId.toString() !== req.user.userId) {
             res.status(403).json({ message: "You are not authorized to delete this post" });
             return;
         }

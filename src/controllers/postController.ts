@@ -37,7 +37,7 @@ const getPostById = async (req: Request, res: Response): Promise<void> => {
 
 const createPost = async (req: Request, res: Response): Promise<void> => {
   const postData = req.body;
-  postData.sender = (req as any).user.username;
+  postData.userId = (req as any).user.userId;
   console.log(postData);
   try {
     const newPost = await Post.create(postData);
@@ -58,11 +58,12 @@ const updatePost = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Post not found" });
       return;
     }
-    if (post.senderId !== (req as any).user.userId) {
+    if (post.userId !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to update this post" });
       return;
     }
-    const updatedPost = await Post.findByIdAndUpdate(id, updateData, { new: true });
+    const { userId, ...rest } = updateData; // Exclude userId from update
+    const updatedPost = await Post.findByIdAndUpdate(id, rest, { new: true });
     if (!updatedPost) {
       res.status(404).json({ message: "Post not found" });
       return;
@@ -83,7 +84,7 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Post not found" });
       return;
     }
-    if (post.senderId !== (req as any).user.userId) {
+    if (post.userId !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to delete this post" });
       return;
     }
