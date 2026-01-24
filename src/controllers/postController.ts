@@ -6,7 +6,7 @@ const getAllPosts = async (req: Request, res: Response): Promise<void> => {
   const userId = req.query.userId;
   try {
     if (userId) {
-      const posts = await Post.find({ userId });
+      const posts = await Post.find({ userId: userId } as any);
       res.json(posts);
     } else {
       const posts = await Post.find();
@@ -58,7 +58,7 @@ const updatePost = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Post not found" });
       return;
     }
-    if (post.userId !== (req as any).user.userId) {
+    if (post.userId.toString() !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to update this post" });
       return;
     }
@@ -84,7 +84,7 @@ const deletePost = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ message: "Post not found" });
       return;
     }
-    if (post.userId !== (req as any).user.userId) {
+    if (post.userId.toString() !== (req as any).user.userId) {
       res.status(403).json({ message: "You are not authorized to delete this post" });
       return;
     }

@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 interface IPost extends Document {
   title: string;
   content: string;
-  userId: string;
+  userId: mongoose.Schema.Types.ObjectId;
 }
 
 const postSchema = new Schema<IPost>({
@@ -16,7 +16,8 @@ const postSchema = new Schema<IPost>({
     required: true
   },
   userId: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: true
   }
 });

@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import postRoute from "./routes/postRoute";
 import commentRoute from "./routes/commentRoute";
 import authRoute from "./routes/authRoute";
+import userRoute from "./routes/userRoute";
+import { swaggerUi, swaggerSpec } from "./swagger";
 import { authenticateToken } from "./controllers/authMiddleware";
 import dotenv from "dotenv";
 
@@ -12,9 +14,13 @@ dotenv.config();
 const app: Express = express();
 
 app.use(express.json());
+
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/posts", postRoute);
 app.use("/posts/:postId/comments", commentRoute);
 app.use("/auth", authRoute);
+app.use("/users", userRoute);
 
 
 const initApp = async (): Promise<Express> => {
