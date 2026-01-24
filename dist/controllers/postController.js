@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -70,11 +81,12 @@ const updatePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(404).json({ message: "Post not found" });
             return;
         }
-        if (post.userId.toString() !== req.user.userId) {
+        if (post.userId !== req.user.userId) {
             res.status(403).json({ message: "You are not authorized to update this post" });
             return;
         }
-        const updatedPost = yield postModel_1.default.findByIdAndUpdate(id, updateData, { new: true });
+        const { userId } = updateData, rest = __rest(updateData, ["userId"]); // Exclude userId from update
+        const updatedPost = yield postModel_1.default.findByIdAndUpdate(id, rest, { new: true });
         if (!updatedPost) {
             res.status(404).json({ message: "Post not found" });
             return;
@@ -95,7 +107,7 @@ const deletePost = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(404).json({ message: "Post not found" });
             return;
         }
-        if (post.userId.toString() !== req.user.userId) {
+        if (post.userId !== req.user.userId) {
             res.status(403).json({ message: "You are not authorized to delete this post" });
             return;
         }
